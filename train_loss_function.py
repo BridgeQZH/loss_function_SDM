@@ -158,17 +158,17 @@ def output_realism(img):
 
    print(0.5*math.sin(math.pi*72/180)*(a*b+a*e+b*d+c*d+e*c))
 
-def decode_img_latents(latents):
-  latents = 1 / 0.18215 * latents
+# def decode_img_latents(latents):
+#   latents = 1 / 0.18215 * latents
 
-  with torch.no_grad():
-    imgs = vae.decode(latents)
+#   with torch.no_grad():
+#     imgs = vae.decode(latents)
 
-  imgs = (imgs / 2 + 0.5).clamp(0, 1)
-  imgs = imgs.detach().cpu().permute(0, 2, 3, 1).numpy()
-  imgs = (imgs * 255).round().astype('uint8')
-  pil_images = [Image.fromarray(image) for image in imgs]
-  return pil_images
+#   imgs = (imgs / 2 + 0.5).clamp(0, 1)
+#   imgs = imgs.detach().cpu().permute(0, 2, 3, 1).numpy()
+#   imgs = (imgs * 255).round().astype('uint8')
+#   pil_images = [Image.fromarray(image) for image in imgs]
+#   return pil_images
 
 def parse_args(input_args=None):
     parser = argparse.ArgumentParser(description="Simple example of a training script.")
@@ -965,7 +965,18 @@ def main(args):
                     loss = loss + args.prior_loss_weight * prior_loss
                     print("Before just loss:", loss)
                     temp_img = decode_img_latents(model_pred)
-                    temp_realism = output_realism(temp_img)
+
+                    model_pred_temp = 1 / 0.18215 * model_pred
+
+                    with torch.no_grad():
+                        imgs = vae.decode(model_pred_temp)
+
+                    imgs = (imgs / 2 + 0.5).clamp(0, 1)
+                    imgs = imgs.detach().cpu().permute(0, 2, 3, 1).numpy()
+                    imgs = (imgs * 255).round().astype('uint8')
+                    pil_images = [Image.fromarray(image) for image in imgs]
+
+                    temp_realism = output_realism(pil_images)
                     # Output
                     loss_realism = 1.0 / temp_realism
                     print("loss_realism:", loss_realism)
