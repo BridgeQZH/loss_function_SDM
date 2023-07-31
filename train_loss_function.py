@@ -561,7 +561,7 @@ def main(args):
         gradient_accumulation_steps=args.gradient_accumulation_steps,
         mixed_precision=args.mixed_precision,
         log_with="tensorboard",
-        project_dir=logging_dir,
+        logging_dir=logging_dir,
     )
 
     logging.basicConfig(
@@ -963,7 +963,7 @@ def main(args):
                     # Add the prior loss to the instance loss.
                     loss = loss + args.prior_loss_weight * prior_loss
                     print("Before just loss:", loss)
-                    temp_img = decode_img_latents(model_pred)
+                    # temp_img = decode_img_latents(model_pred)
 
                     model_pred_temp = 1 / 0.18215 * model_pred
 
